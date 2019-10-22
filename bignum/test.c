@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[])
 {
-	unsigned int ia = 0x12345678;
+	unsigned int ia = 0xF1345678;
 	unsigned int ib = 0x12345678;
 
 	BIG_INT a = { 0 };
@@ -14,15 +14,20 @@ int main(int argc, char *argv[])
 
 	bn_malloc(&a, 100);
 	bn_malloc(&b, 100);
-	bn_malloc(&c, 100)
+	bn_malloc(&c, 100);
 
 	memcpy(a.data, &ia, sizeof(unsigned int));
 	memcpy(b.data, &ib, sizeof(unsigned int));
 
-	bn_print((unsigned char *)(&num), sizeof(int));	
+	a.len = sizeof(unsigned int);
+	b.len = sizeof(unsigned int);
 
-	
+	bn_print((unsigned char *)(a.data), sizeof(unsigned int));	
+	bn_print((unsigned char *)(b.data), sizeof(unsigned int));
 
+	BOOL r = bn_add(&a, &b, &c);
+	printf("result = %d, c.len = %d\n", r, c.len);
+	bn_print(c.data, c.len);
 
 	bn_free(&a);
 	bn_free(&b);

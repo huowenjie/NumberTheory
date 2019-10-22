@@ -45,7 +45,7 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 	int j = 0, k = 0, w = 0;
 
 	// 计算中间值，用于进位判断
-	short tmp = 0;;
+	short tmp = 0;
 
 	// 加数、被加数、和
 	unsigned char *pa = NULL;
@@ -70,8 +70,7 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 	pb = addend->data;
 	pr = ret->data;
 
-	// 目前仅实现小端法
-	for (j = orign->len, k = addend->len, w = ret->len; i < w; i++) {
+	for (j = orign->len, k = addend->len, w = ret->buf_len; i < w; i++) {
 		if (i < j && i < k) {
 			tmp = pa[i] + pb[i];
 		} else if (i >= j && i < k) {
@@ -79,11 +78,11 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 		} else if (i < j && i >= k) {
 			tmp = pa[i];
 		} else {
-
+			ret->len = ((0xFF00 & tmp) && (i < (w - 1))) ? (i + 1) : i;
 			break;
 		}
 		
-		if (0xFF00 & tmp) {
+		if ((0xFF00 & tmp) && i < (w - 1)) {
 			// 进位
 			pr[i + 1] += 0x01;
 		}
