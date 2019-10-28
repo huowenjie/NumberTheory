@@ -38,6 +38,17 @@ BOOL bn_malloc(BIG_INT *num, int len)
 	return TRUE;
 }
 
+void bn_free(BIG_INT *num)
+{
+	if (num && num->data) {
+		free(num->data);
+
+		num->len = 0;
+		num->neg = 0;
+		num->bto = 0;
+	}
+}
+
 BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 {
 	// 循环计数器
@@ -87,20 +98,32 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 			pr[i + 1] += 0x01;
 		}
 		
-		pr[i] = tmp & 0x00FF;
+		pr[i] += tmp & 0x00FF;
 	}
 
 	return TRUE;
 }
 
-void bn_free(BIG_INT *num)
+BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 {
-	if (num && num->data) {
-		free(num->data);
-
-		num->len = 0;
-		num->neg = 0;
-		num->bto = 0;
+	if (!orign || !subend || !ret) {
+		return FALSE;
 	}
+
+	if (!orign->data || !subend->data || !ret->data) {
+		return FALSE;
+	}
+
+	// 差的缓冲区不小于被减数以及减数
+	if (ret->buf_len < orign->len || ret->buf_len < subend->len) {
+		return FALSE;
+	}
+
+	// 被减数、减数、差
+	unsigned char *pa = NULL;
+	unsigned char *pb = NULL;
+	unsigned char *pc = NULL;
+
+	return TRUE;
 }
 

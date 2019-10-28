@@ -5,8 +5,13 @@
 
 int main(int argc, char *argv[])
 {
-	unsigned int ia = 0xF1345678;
-	unsigned int ib = 0x12345678;
+	printf("a and b:");
+
+	unsigned int ia = 0;
+	unsigned int ib = 0;
+
+	scanf("%d", &ia);
+	scanf("%d", &ib);
 
 	BIG_INT a = { 0 };
 	BIG_INT b = { 0 };
@@ -28,6 +33,7 @@ int main(int argc, char *argv[])
 	BOOL r = bn_add(&a, &b, &c);
 	printf("result = %d, c.len = %d\n", r, c.len);
 	bn_print(c.data, c.len);
+	printf("c = %d\n", *((int *)c.data));
 
 	bn_free(&a);
 	bn_free(&b);

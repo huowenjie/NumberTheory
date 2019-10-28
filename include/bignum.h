@@ -25,8 +25,9 @@ void bn_print(unsigned char *data, int len);
 BOOL bn_malloc(BIG_INT *num, int len);
 void bn_free(BIG_INT *num);
 
-// 大数相加
+// 大数相加减
 BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret);
+BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret);
 
 #endif // __BIG_NUM_H__
 
