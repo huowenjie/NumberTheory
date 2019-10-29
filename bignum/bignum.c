@@ -49,6 +49,50 @@ void bn_free(BIG_INT *num)
 	}
 }
 
+int bn_compare(const BIG_INT *num1, const BIG_INT *num2)
+{
+	int ret = 0;
+	int i = 0;
+
+	// 比较空指针
+	if (!num1 && !num2) {
+		return 0;
+	}
+
+	if (!num1 || !num2) {
+		return (num1 == NULL) ? -1 : 1;
+	}
+
+	// 如果异号，正数为大
+	if (num1->neg != num2->neg) {
+		return (num1->neg == BIGNUM_POSITIVE) ? 1 : -1;
+	}
+
+	// 同号比较
+	// ---------------------------------------------
+
+	// 比较长度
+	if (num1->len > num2->len) {
+		ret = 1;
+	} else if (num1->len < num2->len) {
+		ret = -1;
+	} else {
+		// 小端法
+		// 长度相同，逐位比较
+		for (i = num1->len - 1; i >= 0; i--) {
+			if (num1->data[i] > num2->data[i]) {
+				ret = 1;
+				break;
+			} else if (num1->data[i] < num2->data[i]) {
+				ret = -1;
+				break;
+			}
+		}
+	}
+
+	return (num1->neg == BIGNUM_POSITIVE) ? ret : -ret;
+}
+
 BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 {
 	// 循环计数器

@@ -27,6 +27,15 @@ int main(int argc, char *argv[])
 	a.len = sizeof(unsigned int);
 	b.len = sizeof(unsigned int);
 
+	int comp = bn_compare(&a, &b);
+	if (comp > 0) {
+		printf("a > b\n");
+	} else if (comp < 0) {
+		printf("a < b\n");
+	} else {
+		printf("a = b\n");
+	}
+
 	bn_print((unsigned char *)(a.data), sizeof(unsigned int));	
 	bn_print((unsigned char *)(b.data), sizeof(unsigned int));
 

@@ -25,6 +25,10 @@ void bn_print(unsigned char *data, int len);
 BOOL bn_malloc(BIG_INT *num, int len);
 void bn_free(BIG_INT *num);
 
+// 比较两个大数，num1 > num2 ,函数返回 1; num1 < num2 
+// 函数返回 -1；num1 = num2 函数返回 0
+int bn_compare(const BIG_INT *num1, const BIG_INT *num2);
+
 // 大数相加减
 BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret);
 BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret);
