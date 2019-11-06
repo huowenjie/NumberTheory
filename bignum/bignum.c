@@ -136,7 +136,7 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 			ret->len = ((0xFF00 & tmp) && (i < (w - 1))) ? (i + 1) : i;
 			break;
 		}
-		
+
 		if ((0xFF00 & tmp) && i < (w - 1)) {
 			// 进位
 			pr[i + 1] += 0x01;
@@ -150,6 +150,23 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 
 BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 {
+	// 比较结果
+	int comp_ret = 0;
+	
+	// 循环计数器
+	int i = 0;
+	int j, k, w = 0;
+
+	short tmp = 0;
+
+	// 被减数、减数、差
+	BIG_INT *na = NULL;
+	BIG_INT *nb = NULL;
+
+	unsigned char *pa = NULL;
+	unsigned char *pb = NULL;
+	unsigned char *pc = NULL;
+
 	if (!orign || !subend || !ret) {
 		return FALSE;
 	}
@@ -158,15 +175,49 @@ BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 		return FALSE;
 	}
 
-	// 差的缓冲区不小于被减数以及减数
-	if (ret->buf_len < orign->len || ret->buf_len < subend->len) {
+	// 差的缓冲区大小必须大于被减数以及减数
+	if (ret->buf_len <= orign->len || ret->buf_len <= subend->len) {
 		return FALSE;
 	}
 
-	// 被减数、减数、差
-	unsigned char *pa = NULL;
-	unsigned char *pb = NULL;
-	unsigned char *pc = NULL;
+	// 比较两数大小，定符号和减法顺序（同号）
+	if ((comp_ret = bn_compare(orign, subend)) == 0) {
+		ret->len = 0;
+		ret->neg = BIGNUM_POSITIVE;
+		memset(ret->data, 0, ret->buf_len);
+		return TRUE;
+	} else if (comp_ret > 0) {
+		ret->neg = BIGNUM_POSITIVE;
+		na = orign;
+		nb = subend;
+	} else {
+		ret->neg = BIGNUM_NEGATIVE;
+		na = subend;
+		nb = orign;
+	}
+
+	// 这里需要判断绝对值 TODO
+
+	pa = na->data;
+	pb = nb->data;
+	pc = ret->data;
+
+	/**
+	 * 基本的减法操作(绝对值大小为pa > pb)
+	 * 如下所示：
+	 *   10 00 11 00 01 10 (j = 6)
+	 * -    10 00 10 10 01 (k = 5, w > 6)
+	 * 逐步借位运算
+	 */
+	for (j = na->len, k = nb->len, w = ret->buf_len; i < w; i++) {
+		if (i < k) {
+
+		} else if (i < j) {
+
+		} else {
+
+		}
+	}
 
 	return TRUE;
 }

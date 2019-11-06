@@ -4,7 +4,7 @@
 #define BIGNUM_LITTLE_ENDIAN 0	// 小端字节序
 #define BIGNUM_BIG_ENDIAN 1		// 大端字节序
 
-#define BIGNUM_POSITIVE 0		// 正数
+#define BIGNUM_POSITIVE 0		// 正数或0
 #define BIGNUM_NEGATIVE 1		// 负数
 
 /*
@@ -25,9 +25,17 @@ void bn_print(unsigned char *data, int len);
 BOOL bn_malloc(BIG_INT *num, int len);
 void bn_free(BIG_INT *num);
 
-// 比较两个大数，num1 > num2 ,函数返回 1; num1 < num2 
-// 函数返回 -1；num1 = num2 函数返回 0
+/**
+ * 比较两个大数，num1 > num2 ,函数返回 1; num1 < num2 
+ * 函数返回 -1；num1 = num2 函数返回 0
+ */
 int bn_compare(const BIG_INT *num1, const BIG_INT *num2);
+
+/**
+ * 比较两个大数的绝对值大小
+ * 函数返回 -1；num1 = num2 函数返回 0
+ */
+int bn_abs_comp(const BIG_INT *num1, const BIG_INT *num2);
 
 // 大数相加减
 BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret);

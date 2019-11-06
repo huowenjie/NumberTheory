@@ -12,3 +12,4 @@ BOOL is_big_endian()
 	return !is_little_endian();
 }
 
+
