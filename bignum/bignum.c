@@ -158,6 +158,7 @@ BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 	int j, k, w = 0;
 
 	short tmp = 0;
+	short lend = 0;
 
 	// 被减数、减数、差
 	BIG_INT *na = NULL;
@@ -210,13 +211,14 @@ BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 	 * 逐步借位运算
 	 */
 	for (j = na->len, k = nb->len, w = ret->buf_len; i < w; i++) {
-		if (i < k) {
-
-		} else if (i < j) {
-
+		if ((tmp = pa[i] - pb[i] - lend) < 0) {
+			lend = 1;
+			tmp = -tmp;
 		} else {
-
+			lend = 0;
 		}
+
+		pc[i] = tmp;
 	}
 
 	return TRUE;
