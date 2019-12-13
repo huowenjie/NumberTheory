@@ -16,10 +16,12 @@ int main(int argc, char *argv[])
 	BIG_INT a = { 0 };
 	BIG_INT b = { 0 };
 	BIG_INT c = { 0 };
+	BIG_INT d = { 0 };
 
 	bn_malloc(&a, 100);
 	bn_malloc(&b, 100);
 	bn_malloc(&c, 100);
+	bn_malloc(&d, 100);
 
 	memcpy(a.data, &ia, sizeof(unsigned int));
 	memcpy(b.data, &ib, sizeof(unsigned int));
@@ -44,9 +46,15 @@ int main(int argc, char *argv[])
 	bn_print(c.data, c.len);
 	printf("c = %d\n", *((int *)c.data));
 
+	r = bn_sub(&a, &b, &d);
+	printf("result = %d, d.len = %d\n", r, d.len);
+	bn_print(d.data, d.len);
+	printf("d = %d\n", *((int *)d.data));
+
 	bn_free(&a);
 	bn_free(&b);
 	bn_free(&c);
+	bn_free(&d);
 
 	return 0;
 }

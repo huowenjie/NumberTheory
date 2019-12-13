@@ -218,6 +218,10 @@ BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 			lend = 0;
 		}
 
+		if (i > k && !lend) {
+			ret->len = i;
+		}
+
 		pc[i] = tmp;
 	}
 
