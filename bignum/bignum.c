@@ -59,6 +59,7 @@ int bn_compare(const BIG_INT *num1, const BIG_INT *num2)
 		return 0;
 	}
 
+	// 空指针一律定为无穷小
 	if (!num1 || !num2) {
 		return (num1 == NULL) ? -1 : 1;
 	}
@@ -68,8 +69,26 @@ int bn_compare(const BIG_INT *num1, const BIG_INT *num2)
 		return (num1->neg == BIGNUM_POSITIVE) ? 1 : -1;
 	}
 
-	// 同号比较
+	// 同号比较绝对值
 	// ---------------------------------------------
+
+	ret = bn_abs_comp(num1, num2);
+	return (num1->neg == BIGNUM_POSITIVE) ? ret : -ret;
+}
+
+int bn_abs_comp(const BIG_INT *num1, const BIG_INT *num2)
+{
+	int ret = 0;
+	int i = 0;
+
+	// 比较空指针
+	if (!num1 && !num2) {
+		return 0;
+	}
+
+	if (!num1 || !num2) {
+		return (num1 == NULL) ? -1 : 1;
+	}
 
 	// 比较长度
 	if (num1->len > num2->len) {
@@ -90,7 +109,7 @@ int bn_compare(const BIG_INT *num1, const BIG_INT *num2)
 		}
 	}
 
-	return (num1->neg == BIGNUM_POSITIVE) ? ret : -ret;
+	return ret;
 }
 
 BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
@@ -120,6 +139,11 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 	// 和的缓冲区大小必须大于被加数以及加数
 	if (ret->buf_len <= orign->len || ret->buf_len <= addend->len) {
 		return FALSE;
+	}
+
+	// 异号相减
+	if (orign->neg != addend->neg) {
+		return bn_sub(orign, addend, ret);
 	}
 
 	pa = orign->data;
