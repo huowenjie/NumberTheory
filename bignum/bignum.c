@@ -101,6 +101,7 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 
 	// 计算中间值，用于进位判断
 	short tmp = 0;
+	unsigned char flag = 0;
 
 	// 加数、被加数、和
 	unsigned char *pa = NULL;
@@ -127,21 +128,17 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 
 	for (j = orign->len, k = addend->len, w = ret->buf_len; i < w; i++) {
 		if (i < j && i < k) {
-			tmp = pa[i] + pb[i];
+			tmp = pa[i] + pb[i] + flag;
 		} else if (i >= j && i < k) {
-			tmp = pb[i];
+			tmp = pb[i] + flag;
 		} else if (i < j && i >= k) {
-			tmp = pa[i];
+			tmp = pa[i] + flag;
 		} else {
 			ret->len = ((0xFF00 & tmp) && (i < (w - 1))) ? (i + 1) : i;
 			break;
 		}
 
-		if ((0xFF00 & tmp) && i < (w - 1)) {
-			// 进位
-			pr[i + 1] += 0x01;
-		}
-		
+		flag = (0xFF00 & tmp) && i < (w - 1) ? 1 : 0;
 		pr[i] += tmp & 0x00FF;
 	}
 
@@ -211,18 +208,17 @@ BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 	 * 逐步借位运算
 	 */
 	for (j = na->len, k = nb->len, w = ret->buf_len; i < w; i++) {
-		if ((tmp = pa[i] - pb[i] - lend) < 0) {
-			lend = 1;
-			tmp = -tmp;
+		if (i < j && i < k) {
+			tmp = pa[i] - pb[i] - lend;
+		} else if (i >= j && i < k) {
+			tmp = pa[i] - lend;
 		} else {
-			lend = 0;
-		}
-
-		if (i > k && !lend) {
 			ret->len = i;
+			break;
 		}
 
-		pc[i] = tmp;
+		lend = (tmp & 0xFF00) ? 1 : 0;
+		pc[i] = (tmp & 0x00FF);
 	}
 
 	return TRUE;
