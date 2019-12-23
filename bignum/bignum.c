@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+static BOOL bn_general_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret);
+static BOOL bn_general_sub(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret);
+
 void bn_print(unsigned char *data, int len)
 {
 	int i = 0;
@@ -114,6 +117,80 @@ int bn_abs_comp(const BIG_INT *num1, const BIG_INT *num2)
 
 BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 {
+	// 判断错误情况
+	if (!orign || !addend || !ret) {
+		return FALSE;
+	}
+
+	if (orign->neg != addend->neg) {
+		return (orign->neg == BIGNUM_POSITIVE) ? 
+			bn_general_sub(orign, addend, ret) : 
+			bn_general_sub(addend, orign, ret);
+	}
+
+	return TRUE;
+}
+
+BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
+{
+	if (!orign || !subend || !ret) {
+		return FALSE;
+	}
+
+	if (orign->neg != subend->neg) {
+		ret->neg = (orign->neg == BIGNUM_POSITIVE) ?
+			BIGNUM_POSITIVE : BIGNUM_NEGATIVE;
+		return bn_general_add(orign, subend, ret);
+	}
+
+	return bn_general_sub(orign, subend, ret);
+}
+
+BOOL bn_mul(BIG_INT *orign, BIG_INT *mulend, BIG_INT *ret)
+{
+	// 比较结果
+	int comp_ret = 0;
+	
+	// 循环计数器
+	int i = 0;
+	int j, k, w = 0;
+
+	short tmp = 0;
+	short lend = 0;
+
+	// 被乘数、乘数、积
+	BIG_INT *na = NULL;
+	BIG_INT *nb = NULL;
+
+	unsigned char *pa = NULL;
+	unsigned char *pb = NULL;
+	unsigned char *pc = NULL;
+
+	if (!orign || !mulend || !ret) {
+		return FALSE;
+	}
+
+	if (!orign->data || !mulend->data || !ret->data) {
+		return FALSE;
+	}
+
+	// 积的缓冲区大小必须大于被乘数和乘数之和
+	if (ret->buf_len <= (orign->len + mulend->len)) {
+		return FALSE;
+	}
+
+	return FALSE;
+}
+
+BOOL bn_div(BIG_INT *orign, BIG_INT *divend, BIG_INT *ret)
+{
+	return FALSE;
+}
+
+// ============================================================================
+
+BOOL bn_general_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
+{
 	// 循环计数器
 	int i = 0;
 	int j = 0, k = 0, w = 0;
@@ -141,11 +218,6 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 		return FALSE;
 	}
 
-	// 异号相减
-	if (orign->neg != addend->neg) {
-		return bn_sub(orign, addend, ret);
-	}
-
 	pa = orign->data;
 	pb = addend->data;
 	pr = ret->data;
@@ -167,9 +239,10 @@ BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret)
 	}
 
 	return TRUE;
+
 }
 
-BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
+BOOL bn_general_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 {
 	// 比较结果
 	int comp_ret = 0;
@@ -217,8 +290,6 @@ BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret)
 		na = subend;
 		nb = orign;
 	}
-
-	// 这里需要判断绝对值 TODO
 
 	pa = na->data;
 	pb = nb->data;

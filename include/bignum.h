@@ -41,5 +41,9 @@ int bn_abs_comp(const BIG_INT *num1, const BIG_INT *num2);
 BOOL bn_add(BIG_INT *orign, BIG_INT *addend, BIG_INT *ret);
 BOOL bn_sub(BIG_INT *orign, BIG_INT *subend, BIG_INT *ret);
 
+// 大数乘除
+BOOL bn_mul(BIG_INT *orign, BIG_INT *mulend, BIG_INT *ret);
+BOOL bn_div(BIG_INT *orign, BIG_INT *divend, BIG_INT *ret);
+
 #endif // __BIG_NUM_H__
 

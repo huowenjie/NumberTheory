@@ -42,12 +42,12 @@ int main(int argc, char *argv[])
 	bn_print((unsigned char *)(b.data), sizeof(unsigned int));
 
 	BOOL r = bn_add(&a, &b, &c);
-	printf("result = %d, c.len = %d\n", r, c.len);
+	printf("result = %d, c.len = %d, neg = %d\n", r, c.len, c.neg);
 	bn_print(c.data, c.len);
 	printf("c = %d\n", *((int *)c.data));
 
 	r = bn_sub(&a, &b, &d);
-	printf("result = %d, d.len = %d\n", r, d.len);
+	printf("result = %d, d.len = %d, neg = %d\n", r, d.len, d.neg);
 	bn_print(d.data, d.len);
 	printf("d = %d\n", *((int *)d.data));
 
